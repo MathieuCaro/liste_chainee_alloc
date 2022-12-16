@@ -6,8 +6,9 @@
 
 #include "linked_list.h"
 
-linked_list *new_element(int index)
+linked_list *new_element(int index, void *ptr)
 {
+
     linked_list *element = (linked_list *)malloc((sizeof(linked_list)));
     if (element == NULL)
     {
@@ -16,7 +17,8 @@ linked_list *new_element(int index)
     }
     element->next = NULL;
     element->previous = NULL;
-    element->data = index;
+    element->size = index;
+    element->ptr = ptr;
     return element;
 }
 void list_free(linked_list *list)
@@ -35,7 +37,7 @@ void list_free(linked_list *list)
     }
 }
 
-linked_list *add_index(linked_list *head, int data, int index)
+linked_list *add_index(linked_list *head, int data, int index, void *ptr)
 {
     linked_list *added_index = head, *temp;
     int compteur = 0;
@@ -45,7 +47,7 @@ linked_list *add_index(linked_list *head, int data, int index)
         compteur++;
     }
 
-    temp = new_element(data);
+    temp = new_element(data, ptr);
     temp->next = added_index;
     if (added_index == NULL)
     {
@@ -63,4 +65,47 @@ linked_list *add_index(linked_list *head, int data, int index)
         return temp;
     }
     return head;
+}
+
+void pop(linked_list *head)
+{
+    linked_list *last_one = head;
+    while (last_one->next != NULL)
+    {
+        last_one = last_one->next;
+    }
+    last_one->previous->next = NULL;
+    free(last_one);
+}
+
+linked_list *list_search(linked_list *head, int data)
+{
+    linked_list *list_search = head;
+    while (list_search)
+    {
+        if (list_search->size >= data)
+            return list_search;
+        list_search = list_search->next;
+    }
+    return NULL;
+}
+
+linked_list *list_remove(linked_list *head, linked_list *to_be_deleted)
+{
+    linked_list *_new_head = NULL;
+    if (to_be_deleted->previous)
+    {
+        to_be_deleted->previous->next = to_be_deleted->next;
+        _new_head = head;
+    }
+    if (to_be_deleted->next)
+    {
+        to_be_deleted->next->previous = to_be_deleted->previous;
+        if (_new_head == NULL)
+        {
+            _new_head = to_be_deleted->next;
+        }
+    }
+    free(to_be_deleted);
+    return _new_head;
 }
