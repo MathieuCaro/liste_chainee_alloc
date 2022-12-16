@@ -109,3 +109,25 @@ linked_list *list_remove(linked_list *head, linked_list *to_be_deleted)
     free(to_be_deleted);
     return _new_head;
 }
+
+void add_before(linked_list *head, void *ptr, int size)
+{
+    linked_list *add_before = head, *temp;
+    if (add_before == NULL)
+    {
+        return;
+    }
+    while (((char *)ptr - (char *)add_before->ptr) && (add_before->next))
+    {
+        add_before = add_before->next;
+    }
+
+    temp = new_element(size, ptr);
+    temp->next = add_before;
+    temp->previous = add_before->previous;
+    if (temp->previous)
+    {
+        add_before->previous->next = temp;
+    }
+    add_before->previous = temp;
+}
