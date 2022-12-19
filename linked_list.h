@@ -12,15 +12,18 @@ typedef struct linked_list
     int size;
     struct linked_list *next;
     struct linked_list *previous;
+    char filled;
 
 } linked_list;
 
-linked_list *new_element(int index, void *ptr);
+linked_list *new_element(int index, void *ptr, char filled);
 void list_free(linked_list *list);
-linked_list *add_index(linked_list *head, int data, int index, void *ptr);
+linked_list *add_index(linked_list *head, int data, int index, void *ptr, char filled);
 linked_list *list_search(linked_list *head, int data);
 void pop(linked_list *head);
 linked_list *list_remove(linked_list *head, linked_list *to_be_deleted);
-void add_before(linked_list *head, void *ptr, int size);
+void add_before(linked_list *head, void *ptr, int size, char filled);
+void add_after(linked_list *head, linked_list *element);
+void push(linked_list *head, int data, void *ptr, char filled);
 
 #endif

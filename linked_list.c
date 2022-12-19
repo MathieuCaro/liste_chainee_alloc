@@ -6,7 +6,7 @@
 
 #include "linked_list.h"
 
-linked_list *new_element(int index, void *ptr)
+linked_list *new_element(int index, void *ptr, char filled)
 {
 
     linked_list *element = (linked_list *)malloc((sizeof(linked_list)));
@@ -15,6 +15,7 @@ linked_list *new_element(int index, void *ptr)
         printf("Probleme d'allocation memoire");
         exit(1);
     }
+    element->filled = filled;
     element->next = NULL;
     element->previous = NULL;
     element->size = index;
@@ -37,7 +38,7 @@ void list_free(linked_list *list)
     }
 }
 
-linked_list *add_index(linked_list *head, int data, int index, void *ptr)
+linked_list *add_index(linked_list *head, int data, int index, void *ptr, char filled)
 {
     linked_list *added_index = head, *temp;
     int compteur = 0;
@@ -47,7 +48,7 @@ linked_list *add_index(linked_list *head, int data, int index, void *ptr)
         compteur++;
     }
 
-    temp = new_element(data, ptr);
+    temp = new_element(data, ptr, filled);
     temp->next = added_index;
     if (added_index == NULL)
     {
@@ -78,16 +79,21 @@ void pop(linked_list *head)
     free(last_one);
 }
 
-linked_list *list_search(linked_list *head, int data)
+void add_after(linked_list *head, linked_list *element)
 {
-    linked_list *list_search = head;
-    while (list_search)
+    if (head->next)
     {
-        if (list_search->size >= data)
-            return list_search;
-        list_search = list_search->next;
+        linked_list *element_next = head->next;
+        head->next = element;
+        element->previous = head;
+        element->next = element_next;
+        element_next->previous = element;
     }
-    return NULL;
+    else
+    {
+        head->next = element;
+        element->previous = head;
+    }
 }
 
 linked_list *list_remove(linked_list *head, linked_list *to_be_deleted)
@@ -110,7 +116,19 @@ linked_list *list_remove(linked_list *head, linked_list *to_be_deleted)
     return _new_head;
 }
 
-void add_before(linked_list *head, void *ptr, int size)
+void push(linked_list *head, int data, void *ptr, char filled)
+{
+    linked_list *new_one = head;
+    while (new_one->next != NULL)
+    {
+        new_one = new_one->next;
+    }
+
+    new_one->next = new_element(data, ptr, filled);
+    new_one->next->previous = new_one;
+}
+
+void add_before(linked_list *head, void *ptr, int size, char filled)
 {
     linked_list *add_before = head, *temp;
     if (add_before == NULL)
@@ -122,7 +140,7 @@ void add_before(linked_list *head, void *ptr, int size)
         add_before = add_before->next;
     }
 
-    temp = new_element(size, ptr);
+    temp = new_element(size, ptr, filled);
     temp->next = add_before;
     temp->previous = add_before->previous;
     if (temp->previous)
